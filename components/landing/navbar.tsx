@@ -1,5 +1,5 @@
 "use client";
-
+import Link from "next/link";
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
@@ -32,9 +32,9 @@ export function Navbar() {
       }`}
     >
       <nav className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4 lg:px-8">
-        <a href="#home" className="font-display text-xl font-bold tracking-tight">
-          NAK
-        </a>
+        <Link href="/" className="font-display text-xl font-bold tracking-tight">
+        NAK
+      </Link>
 
         <ul className="hidden items-center gap-8 md:flex">
           {NAV_LINKS.map((link) => (
@@ -50,12 +50,17 @@ export function Navbar() {
         </ul>
 
         <div className="flex items-center gap-3">
-          <Button variant="ghost" size="default" className="hidden sm:inline-flex">
+         <Link href="/login">
+         <Button variant="ghost">
             Login
-          </Button>
-          <Button variant="primary" size="default">
-            Get Started
-          </Button>
+         </Button>
+         </Link>
+
+<Link href="/signup">
+  <Button>
+    Get Started
+  </Button>
+</Link>
         </div>
       </nav>
     </motion.header>

@@ -1,7 +1,6 @@
 "use client";
-
+import Link from "next/link";
 import { motion } from "framer-motion";
-import { Play } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { DashboardMockup } from "@/components/landing/dashboard-mockup";
 import { NetworkBackground } from "@/components/landing/network-background";
@@ -41,13 +40,16 @@ export function Hero() {
             transition={{ duration: 0.7, delay: 0.3, ease: "easeOut" }}
             className="mt-9 flex flex-wrap items-center gap-4"
           >
+            <Link href="/signup">
             <Button variant="primary" size="lg">
               Get Started
             </Button>
-            <Button variant="outline" size="lg">
-              <Play className="h-4 w-4" />
-              Watch Demo
-            </Button>
+            </Link>
+           <Link href="/login">
+           <Button variant="outline" size="lg">
+              Sign In
+           </Button>
+           </Link>
           </motion.div>
         </div>
 

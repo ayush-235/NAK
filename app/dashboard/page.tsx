@@ -1,10 +1,13 @@
 "use client";
-
+import Sidebar from "@/components/dashboard/Sidebar";
+import Topbar from "@/components/dashboard/Topbar";
+import Feed from "@/components/dashboard/Feed";
+import Rightbar from "@/components/dashboard/Rightbar";
 import { useEffect, useState } from "react";
 import { auth } from "@/firebase/config";
 import { onAuthStateChanged, signOut } from "firebase/auth";
 import { useRouter } from "next/navigation";
-import { Button } from "@/components/ui/button";
+
 
 export default function DashboardPage() {
   const router = useRouter();
@@ -29,31 +32,30 @@ export default function DashboardPage() {
   };
 
   return (
-    <div className="min-h-screen bg-background flex items-center justify-center px-6">
+  <div className="flex h-screen bg-background">
 
-      <div className="w-full max-w-xl rounded-3xl border border-zinc-800 bg-zinc-900/60 p-10 text-center">
+    {/* Sidebar */}
+    <Sidebar />
 
-        <h1 className="text-4xl font-bold text-white">
-          Welcome to Dashboard 🚀
-        </h1>
+    {/* Main Area */}
+    <div className="flex-1 flex flex-col">
 
-        <p className="mt-6 text-zinc-400">
-          Logged in as
-        </p>
+      <Topbar />
 
-        <p className="text-violet-400 font-semibold text-xl mt-2">
-          {userEmail}
-        </p>
+      <div className="flex flex-1 overflow-hidden">
 
-        <Button
-          onClick={handleLogout}
-          className="mt-10 w-full py-6 rounded-xl"
-        >
-          Logout
-        </Button>
+        {/* Feed */}
+        <main className="flex-1 overflow-y-auto p-6">
+          <Feed />
+        </main>
+
+        {/* Rightbar */}
+        <Rightbar />
 
       </div>
 
     </div>
-  );
+
+  </div>
+);
 }
