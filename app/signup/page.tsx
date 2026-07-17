@@ -1,8 +1,12 @@
 "use client";
 
+import { doc, serverTimestamp, setDoc } from "firebase/firestore";
 import { useState } from "react";
-import { createUserWithEmailAndPassword } from "firebase/auth";
-import { auth } from "@/firebase/config";
+import {
+  createUserWithEmailAndPassword,
+  sendEmailVerification,
+} from "firebase/auth";
+import { auth, db } from "@/firebase/config";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { Input } from "@/components/ui/input";
@@ -10,16 +14,39 @@ import { Button } from "@/components/ui/button";
 
 export default function SignupPage() {
   const router = useRouter();
-
+  const [displayName, setDisplayName] = useState("");
+  const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
   const handleSignup = async () => {
+    if (!displayName || !username || !email || !password) {
+  alert("Please fill all fields.");
+  return;
+}
     try {
-      await createUserWithEmailAndPassword(auth, email, password);
+      const userCredential = await createUserWithEmailAndPassword(
+  auth,
+  email,
+  password
+);
 
-      alert("Account Created Successfully 🎉");
-      router.push("/dashboard");
+const user = userCredential.user;
+await sendEmailVerification(user);
+
+await setDoc(doc(db, "users", user.uid), {
+  displayName,
+  username: username.toLowerCase(),
+  email,
+  bio: "",
+  photoURL: "",
+  createdAt: serverTimestamp(),
+});
+
+     alert(
+  "Account created successfully! 🎉\n\nPlease check your email and verify your account before logging in."
+);
+     router.push("/verify-email");
     } catch (error: any) {
       alert(error.message);
     }
@@ -37,6 +64,19 @@ export default function SignupPage() {
         </p>
 
         <div className="mt-8 space-y-5">
+          <Input
+          type="text"
+          placeholder="Full Name"
+          value={displayName}
+         onChange={(e) => setDisplayName(e.target.value)}
+          />
+
+          <Input
+          type="text"
+          placeholder="Username"
+          value={username}
+          onChange={(e) => setUsername(e.target.value)}
+           />
           <Input
             type="email"
             placeholder="Email Address"

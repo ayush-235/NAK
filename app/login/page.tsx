@@ -1,6 +1,10 @@
 "use client";
 import { useState } from "react";
-import { signInWithEmailAndPassword } from "firebase/auth";
+import {
+  signInWithEmailAndPassword,
+  signOut,
+  sendEmailVerification,
+} from "firebase/auth";
 import { auth } from "@/firebase/config";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
@@ -12,15 +16,68 @@ export default function LoginPage() {
 
 const [email, setEmail] = useState("");
 const [password, setPassword] = useState("");
+const [loading, setLoading] = useState(false);
 
 const handleLogin = async () => {
+  
   try {
-    await signInWithEmailAndPassword(auth, email, password);
+   const userCredential = await signInWithEmailAndPassword(
+  auth,
+  email,
+  password
+);
 
-    alert("Login Successful 🎉");
-    router.push("/dashboard");
+
+const user = userCredential.user;
+
+await user.reload();
+
+if (!user.emailVerified) {
+  await signOut(auth);
+
+  alert(
+    "Please verify your email before logging in. Check your inbox or spam folder."
+  );
+
+  return;
+}
+
+alert("Login Successful 🎉");
+router.push("/dashboard");
   } catch (error: any) {
     alert(error.message);
+  }
+};
+const handleResendVerification = async () => {
+  if (!email || !password) {
+    alert("Please enter your email and password first.");
+    return;
+  }
+
+  try {
+    setLoading(true);
+
+    const userCredential = await signInWithEmailAndPassword(
+      auth,
+      email,
+      password
+    );
+
+    const user = userCredential.user;
+
+    if (user.emailVerified) {
+      alert("Your email is already verified ✅");
+      return;
+    }
+
+    await sendEmailVerification(user);
+    await signOut(auth);
+
+    alert("Verification email sent! Please check your inbox or spam folder.");
+  } catch (error: any) {
+    alert(error.message);
+  } finally {
+    setLoading(false);
   }
 };
   return (
@@ -56,6 +113,14 @@ const handleLogin = async () => {
          Login
          </Button>
          </div>
+         <Button
+  variant="outline"
+  className="w-full"
+  onClick={handleResendVerification}
+  disabled={loading}
+>
+  {loading ? "Sending..." : "Resend Verification Email"}
+</Button>
 
         <p className="mt-6 text-center text-zinc-400">
           Don't have an account?{" "}

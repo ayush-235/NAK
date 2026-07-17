@@ -1,5 +1,6 @@
 "use client";
-import { getFlicks } from "@/lib/getFlicks";
+import { formatTime } from "@/lib/formatTime";
+import { subscribeToFlicks } from "@/lib/subscribeToFlicks";
 import { Flick } from "@/types/flick";
 import { useState, useEffect } from "react";
 import { auth } from "@/firebase/config";
@@ -8,13 +9,14 @@ export default function Feed() {
     const [text, setText] = useState("");
 const [loading, setLoading] = useState(false);
 const [flicks, setFlicks] = useState<Flick[]>([]);
-const loadFlicks = async () => {
-  const data = await getFlicks();
-  setFlicks(data as Flick[]);
-};
+
 
 useEffect(() => {
-  loadFlicks();
+  const unsubscribe = subscribeToFlicks((data) => {
+    setFlicks(data);
+  });
+
+  return () => unsubscribe();
 }, []);
 
 const handlePublish = async () => {
@@ -37,7 +39,6 @@ const handlePublish = async () => {
     );
 
     setText("");
-    await loadFlicks();
     alert("Flick published successfully! ⚡");
   } catch (error) {
     console.error(error);
@@ -110,7 +111,7 @@ const handlePublish = async () => {
         </h3>
 
         <p className="text-sm text-zinc-500">
-          Just now
+       {formatTime(flick.createdAt)}
         </p>
       </div>
     </div>
