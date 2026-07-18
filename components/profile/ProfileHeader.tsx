@@ -1,13 +1,16 @@
+import AvatarUpload from "./AvatarUpload";
 type ProfileHeaderProps = {
   displayName: string;
   username: string;
   bio: string;
+  photoURL?: string;
 };
 
 export default function ProfileHeader({
   displayName,
   username,
   bio,
+  photoURL,
 }: ProfileHeaderProps) {
   return (
     <div className="overflow-hidden rounded-3xl border border-zinc-800 bg-zinc-900">
@@ -19,11 +22,10 @@ export default function ProfileHeader({
       <div className="relative px-8 pb-8">
         {/* Avatar */}
         <div className="-mt-20 flex items-end justify-between">
-  <div className="h-40 w-40 rounded-full border-4 border-zinc-900 bg-gradient-to-br from-zinc-700 to-zinc-900 shadow-2xl"></div>
+  <AvatarUpload photoURL={photoURL} />
+  
 
-  <button className="rounded-xl bg-violet-600 px-5 py-2 font-medium text-white transition hover:bg-violet-700">
-    Edit Profile
-  </button>
+  
 </div>
 
         <div className="mt-5">

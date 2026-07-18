@@ -50,12 +50,12 @@ export default function ProfilePage() {
 
  return (
   <div className="space-y-6">
-    <ProfileHeader
-      displayName={profile?.displayName || ""}
-      username={profile?.username || ""}
-      bio={profile?.bio || ""}
-    />
-
+   <ProfileHeader
+  displayName={profile?.displayName || ""}
+  username={profile?.username || ""}
+  bio={profile?.bio || ""}
+  photoURL={profile?.photoURL}
+/>
     <ProfileStats
       followers={0}
       following={0}
