@@ -1,16 +1,23 @@
 "use client";
 
+import EditProfileModal from "@/components/profile/EditProfileModal";
+import ProfileTabs from "@/components/profile/ProfileTabs";
+import ProfileActions from "@/components/profile/ProfileActions";
+import ProfileStats from "@/components/profile/ProfileStats";
+import ProfileHeader from "@/components/profile/ProfileHeader";
 import { useEffect, useState } from "react";
 import { auth, db } from "@/firebase/config";
 import { onAuthStateChanged } from "firebase/auth";
 import { doc, getDoc } from "firebase/firestore";
 import { useRouter } from "next/navigation";
+import { Profile } from "../../../types/profile";
 
 export default function ProfilePage() {
   const router = useRouter();
 
-  const [profile, setProfile] = useState<any>(null);
+  const [profile, setProfile] = useState<Profile | null>(null);
   const [loading, setLoading] = useState(true);
+  const [isEditOpen, setIsEditOpen] = useState(false);
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
@@ -30,7 +37,7 @@ export default function ProfilePage() {
       const docSnap = await getDoc(docRef);
 
       if (docSnap.exists()) {
-        setProfile(docSnap.data());
+        setProfile(docSnap.data() as Profile);
       }
 
       setLoading(false);
@@ -41,14 +48,32 @@ export default function ProfilePage() {
 
   if (loading) return <div className="p-8">Loading...</div>;
 
-  return (
-    <div className="p-8">
-      <h1 className="text-3xl font-bold">My Profile</h1>
+ return (
+  <div className="space-y-6">
+    <ProfileHeader
+      displayName={profile?.displayName || ""}
+      username={profile?.username || ""}
+      bio={profile?.bio || ""}
+    />
 
-      <p>Name: {profile?.displayName}</p>
-      <p>Username: @{profile?.username}</p>
-      <p>Email: {profile?.email}</p>
-      <p>Bio: {profile?.bio}</p>
-    </div>
-  );
+    <ProfileStats
+      followers={0}
+      following={0}
+      flicks={0}
+      pulse={0}
+    />
+
+   <ProfileActions
+  isOwnProfile
+  onEdit={() => setIsEditOpen(true)}
+/>
+
+    <ProfileTabs />
+    <EditProfileModal
+  open={isEditOpen}
+  onClose={() => setIsEditOpen(false)}
+  profile={profile}
+/>
+  </div>
+);
 }

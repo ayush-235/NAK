@@ -1,5 +1,6 @@
 "use client";
 
+import { generateNakId } from "@/lib/generateNakId";
 import { doc, serverTimestamp, setDoc } from "firebase/firestore";
 import { useState } from "react";
 import {
@@ -38,8 +39,22 @@ await setDoc(doc(db, "users", user.uid), {
   displayName,
   username: username.toLowerCase(),
   email,
+
+  nakId: generateNakId(),
+
   bio: "",
   photoURL: "",
+  coverPhoto: "",
+
+  location: "",
+  website: "",
+
+  followers: 0,
+  following: 0,
+
+  flickCount: 0,
+  pulseCount: 0,
+
   createdAt: serverTimestamp(),
 });
 
